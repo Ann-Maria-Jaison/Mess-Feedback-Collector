@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Mess Feedback System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .delete-button {
+            background-color: #F44336;
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+        }
+        #adminPanel, #userFeedback {
+            display: none;
+        }
+        .menu-item {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #feedbackList, #suggestionList, #complaintList {
+            margin-bottom: 20px;
+        }
+        .feedback-item {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .food-rating-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .food-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avg-rating {
+            color: #FFC107;
+            font-weight: bold;
+        }
+        .rating-distribution {
+            display: flex;
+            height: 20px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            padding: 0 5px;
+        }
+        .rating-summary {
+            text-align: right;
+            color: #666;
+            font-size: 12px;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .responsive-grid {
+                grid-template-columns: 1fr;
+            }
+            input, select, textarea, .btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="container">
+        <h2>Hostel Mess Feedback System</h2>
+        <div class="login-container">
+            <select id="loginType">
+                <option value="user">Student</option>
+                <option value="admin">Admin</option>
+            </select>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <!-- User Feedback Page -->
+    <div id="userFeedback" class="container">
+        <h2>Student Feedback</h2>
+        <div id="menuItems" class="menu-container"></div>
+        
+        <h3>Suggestions</h3>
+        <textarea id="suggestions" placeholder="Enter your suggestions..."></textarea>
+        
+        <h3>Complaints</h3>
+        <textarea id="complaints" placeholder="Enter your complaints..."></textarea>
+        
+        <button onclick="submitFeedback()">Submit Feedback</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="container">
+        <h2>Admin Dashboard</h2>
+        
+        <div>
+            <h3>User Login Control</h3>
+            <button onclick="toggleUserLoginAccess(true)">Activate User Page</button>
+            <button onclick="toggleUserLoginAccess(false)" class="deactivate-button">Deactivate User Page</button>
+        </div>
+
+        <div>
+            <h3>Food Item Ratings</h3>
+            <div id="foodRatings"></div>
+        </div>
+        
+        <div>
+            <h3>Suggestions</h3>
+            <div id="suggestionList"></div>
+        </div>
+        
+        <div>
+            <h3>Complaints</h3>
+            <div id="complaintList"></div>
+        </div>
+        
+        <div>
+            <h3>Generate Report</h3>
+            <input type="text" id="phoneNumber" placeholder="Enter Phone Number">
+            <button onclick="generateAndSendPDF()">Generate & Send PDF</button>
+        </div>
+        
+        <div>
+            <h3>Danger Zone</h3>
+            <button onclick="clearAllData()" class="delete-button">Clear All Feedback Data</button>
+        </div>
+        
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        // Food items
+        const foodItems = [
+            // Breakfast Items
+            'Bread', 'Vella Kadala Curry', 'Egg', 'Bru Coffee', 
+            'Dosa', 'Chammanthi', 'Uppumavu', 
+            'Kallappam', 'Veg. Stew', 'Puttu', 'Pazham', 
+            'Idli', 'Sambar', 
+
+            // Lunch Items
+            'Rice', 'Fish Curry', 'Mathanga-Payar', 
+            'Pachamoru', 'Cabbage Thoran', 'Cherupayar Thoran', 
+            'Kaalan', 'Pulissery', 'Aviyal', 
+            'Parippu Curry', 'Vanpayar', 'Pappadom', 'Payasam', 
+            'Rasam', 'Vazhakka-Payar',
+
+            // Supper Items
+            'Chicken Fry', 'Carrot Thoran', 
+            'Fried Rice (Jeera)', 'Chicken Curry', 'Salad', 
+            'Kappa Biriyani', 'Puttu', 'Beef Curry', 
+            'Porotta', 'Veg. Curry', 
+            'Biriyani', 'Butter Chicken', 
+            'Potato Mezhukkupuratti', 
+            'Kanji', 'Cherupayar', 'Mango Pickle',
+
+            // Tiffin Items
+            'Tea', 'Beetroot Cake', 
+            'Parippu Vada', 
+            'Dilkhush', 
+            'Bolly', 
+            'Egg Puffs', 
+            'Cream Bun', 
+            'Sweetnan'
+        ];
+
+        function toggleUserLoginAccess(activate) {
+            localStorage.setItem('userLoginActive', activate);
+            updateUserLoginStatus();
+            alert(activate ? 'User login has been activated.' : 'User login has been deactivated.');
+        }
+
+        // New function to clear all feedback data
+        function clearAllData() {
+            // Ask for confirmation before clearing data
+            const confirmClear = confirm("Are you sure you want to clear ALL feedback data? This action cannot be undone.");
+            
+            if (confirmClear) {
+                // Remove feedback list from local storage
+                localStorage.removeItem('feedbackList');
+                
+                // Refresh the admin panel to show empty lists
+                loadAdminData();
+                
+                // Show a confirmation message
+                alert("All feedback data has been cleared successfully.");
+            }
+        }
+
+        function renderMenuItems() {
+            const menuContainer = document.getElementById('menuItems');
+            menuContainer.innerHTML = '';
+            
+            foodItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'menu-item';
+                itemDiv.innerHTML = `
+                    <span>${item}</span>
+                    <select data-item="${item}">
+                        <option value="">Rate</option>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                `;
+                menuContainer.appendChild(itemDiv);
+            });
+        }
+
+        function submitFeedback() {
+            const ratings = {};
+            const selects = document.querySelectorAll('#menuItems select');
+            selects.forEach(select => {
+                if (select.value) {
+                    ratings[select.getAttribute('data-item')] = parseInt(select.value);
+                }
+            });
+
+            const suggestions = document.getElementById('suggestions').value.trim();
+            const complaints = document.getElementById('complaints').value.trim();
+
+            if (Object.keys(ratings).length === 0) {
+                alert('Please rate at least one food item');
+                return;
+            }
+
+            const feedback = {
+                username: document.getElementById('username').value,
+                ratings,
+                suggestions,
+                complaints,
+                timestamp: new Date().toISOString()
+            };
+
+            // Store feedback in localStorage
+            let feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+            feedbackList.push(feedback);
+            localStorage.setItem('feedbackList', JSON.stringify(feedbackList));
+
+            alert('Feedback submitted successfully!');
+            logout();
+        }
+
+        function loadAdminData() {
+            const feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+            
+            // Calculate food ratings with more detailed analysis
+            const foodRatings = {};
+            feedbackList.forEach(feedback => {
+                Object.entries(feedback.ratings).forEach(([item, rating]) => {
+                    if (!foodRatings[item]) {
+                        foodRatings[item] = { 
+                            total: 0, 
+                            count: 0, 
+                            ratings: {1:0, 2:0, 3:0, 4:0, 5:0} 
+                        };
+                    }
+                    foodRatings[item].total += rating;
+                    foodRatings[item].count++;
+                    foodRatings[item].ratings[rating]++;
+                });
+            });
+
+            // Display food ratings with improved styling
+            const foodRatingsContainer = document.getElementById('foodRatings');
+            foodRatingsContainer.innerHTML = '';
+            
+            // Sort items by average rating
+            const sortedItems = Object.entries(foodRatings)
+                .map(([item, data]) => ({
+                    item, 
+                    avgRating: data.total / data.count,
+                    ...data
+                }))
+                .sort((a, b) => b.avgRating - a.avgRating);
+
+            sortedItems.forEach(itemData => {
+                const ratingDiv = document.createElement('div');
+                ratingDiv.className = 'food-rating-item';
+                
+                // Calculate rating distribution percentage
+                const totalRatings = itemData.count;
+                const ratingDistribution = [
+                    { stars: 5, count: itemData.ratings[5], color: '#4CAF50' },
+                    { stars: 4, count: itemData.ratings[4], color: '#8BC34A' },
+                    { stars: 3, count: itemData.ratings[3], color: '#FFC107' },
+                    { stars: 2, count: itemData.ratings[2], color: '#FF9800' },
+                    { stars: 1, count: itemData.ratings[1], color: '#F44336' }
+                ];
+
+                const ratingBars = ratingDistribution.map(rating => {
+                    const percentage = (rating.count / totalRatings) * 100;
+                    return `
+                        <div class="rating-bar" style="background-color: ${rating.color}; width: ${percentage}%;">
+                            ${rating.stars} Star: ${percentage.toFixed(1)}%
+                        </div>
+                    `;
+                }).join('');
+
+                ratingDiv.innerHTML = `
+                    <div class="food-item-header">
+                        <strong>${itemData.item}</strong>
+                        <span class="avg-rating">Avg: ${itemData.avgRating.toFixed(2)} ★</span>
+                    </div>
+                    <div class="rating-distribution">
+                        ${ratingBars}
+                    </div>
+                    <div class="rating-summary">
+                        Total Ratings: ${itemData.count}
+                    </div>
+                `;
+                
+                foodRatingsContainer.appendChild(ratingDiv);
+            });
+
+            // Display suggestions
+            const suggestionList = document.getElementById('suggestionList');
+            suggestionList.innerHTML = '';
+            feedbackList.forEach(feedback => {
+                if (feedback.suggestions) {
+                    const suggestionDiv = document.createElement('div');
+                    suggestionDiv.className = 'feedback-item';
+                    suggestionDiv.innerHTML = `
+                        <strong>${feedback.username}</strong>: 
+                        ${feedback.suggestions}
+                    `;
+                    suggestionList.appendChild(suggestionDiv);
+                }
+            });
+
+            // Display complaints
+            const complaintList = document.getElementById('complaintList');
+            complaintList.innerHTML = '';
+            feedbackList.forEach(feedback => {
+                if (feedback.complaints) {
+                    const complaintDiv = document.createElement('div');
+                    complaintDiv.className = 'feedback-item';
+                    complaintDiv.innerHTML = `
+                        <strong>${feedback.username}</strong>: 
+                        ${feedback.complaints}
+                    `;
+                    complaintList.appendChild(complaintDiv);
+                }
+            });
+        }
+
+        function updateUserLoginStatus() {
+            const isUserLoginActive = localStorage.getItem('userLoginActive') === 'true';
+            const statusMessage = document.getElementById('userLoginStatus');
+            
+            if (statusMessage) {
+                statusMessage.textContent = isUserLoginActive 
+                    ? '' 
+                    : 'User login is currently deactivated. Please contact admin.';
+            }
+        }
+
+
+
+        // Remaining functions from the previous script (login, logout, etc.) stay the same
+        function login() {
+            const loginType = document.getElementById('loginType').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (loginType === 'user') {
+                const isUserLoginActive = localStorage.getItem('userLoginActive') === 'true';
+                
+                if (!isUserLoginActive) {
+                    alert('User login is currently deactivated. Please contact admin.');
+                    return;
+                }
+            }
+
+            if (loginType === 'user' && username && password) {
+                // Simple user authentication
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('userFeedback').style.display = 'block';
+                renderMenuItems();
+            } else if (loginType === 'admin' && username === 'admin' && password === 'admin123') {
+                // Simple admin authentication
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadAdminData();
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        updateUserLoginStatus();
+
+        function logout() {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('userFeedback').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+            
+            // Reset form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+        function generateAndSendPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!phoneNumber) {
+                alert('Please enter a phone number');
+                return;
+            }
+
+            const feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+            
+            // PDF Generation
+            doc.setFontSize(18);
+            doc.text('Hostel Mess Feedback Report', 10, 20);
+            
+            let yPos = 30;
+            
+            // Food Ratings Section
+            doc.setFontSize(14);
+            doc.text('Food Item Ratings', 10, yPos);
+            yPos += 10;
+            
+            const foodRatings = {};
+            feedbackList.forEach(feedback => {
+                Object.entries(feedback.ratings).forEach(([item, rating]) => {
+                    if (!foodRatings[item]) {
+                        foodRatings[item] = { total: 0, count: 0 };
+                    }
+                    foodRatings[item].total += rating;
+                    foodRatings[item].count++;
+                });
+            });
+
+            Object.entries(foodRatings).forEach(([item, data]) => {
+                const avgRating = data.total / data.count;
+                doc.setFontSize(10);
+                doc.text(`${item}: ${avgRating.toFixed(2)} Stars (${data.count} ratings)`, 15, yPos);
+                yPos += 7;
+            });
+
+            // Suggestions Section
+            yPos += 10;
+            doc.setFontSize(14);
+            doc.text('Suggestions', 10, yPos);
+            yPos += 10;
+            
+            feedbackList.forEach(feedback => {
+                if (feedback.suggestions) {
+                    doc.setFontSize(10);
+                    doc.text(`${feedback.username}: ${feedback.suggestions}`, 15, yPos);
+                    yPos += 7;
+                }
+            });
+
+            // Complaints Section
+            yPos += 10;
+            doc.setFontSize(14);
+            doc.text('Complaints', 10, yPos);
+            yPos += 10;
+            
+            feedbackList.forEach(feedback => {
+                if (feedback.complaints) {
+                    doc.setFontSize(10);
+                    doc.text(`${feedback.username}: ${feedback.complaints}`, 15, yPos);
+                    yPos += 7;
+                }
+            });
+
+            // Save PDF
+            const pdfBlob = doc.output('blob');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+
+            // Simulated PDF Sending (in real-world, this would be a backend API call)
+            alert(`PDF Generated! Would be sent to ${phoneNumber}`);
+            window.open(pdfUrl);
+        }
+
+        </script>
+</body>
+</html>
