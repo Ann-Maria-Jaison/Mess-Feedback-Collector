@@ -21,15 +21,15 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 👩‍🎓 **Students:**
 
 - Log in and rate food items 🥘
-- Give suggestions or file complaints 🤬
-- See a list of the **worst-rated** food items 😵‍💫
+- Give suggestions or file complaints 
+- See a list of the **worst-rated** food items 
 
 👨‍💼 **Admin:**
 
-- Control when students can submit feedback 🔒
+- Control when students can submit feedback 
 - View **sorted ratings** (best → worst food items) 📊
-- See a **visual color-coded rating distribution** 🟢🟡🔴
-- Generate a **PDF report** for mess committee meetings 📝
+- See a **visual color-coded rating distribution**
+- Generate a **PDF report** for mess committee meetings
 - **Wipe all data** (for when things get out of hand) 🚨
 
 ---
@@ -43,7 +43,7 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 
 ### 📊 **Advanced Analytics Dashboard**
 
-- Sorted food ratings (from ⭐⭐⭐⭐⭐ to 🤮)
+- Sorted food ratings (from ⭐⭐⭐⭐⭐ to ⭐)
 - **Color-coded rating bars:**
   - 🟢 **Green:** 5-star ratings (food actually edible!)
   - 🟢 **Light Green:** 4-star ratings (not bad, not bad)
@@ -55,31 +55,31 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 ### 📝 **Feedback Collection**
 
 - Numeric ratings 📊
-- **Text-based suggestions** for improvements 📝
-- **Text-based complaints** to vent your frustration 🤬
-- **Timestamp tracking** for each submission ⏳
+- **Text-based suggestions** for improvements 
+- **Text-based complaints** to vent your frustration 
+- **Timestamp tracking** for each submission 
 
 ### 💾 **Persistent Local Storage (No Backend Required!)**
 
-- Stores all feedback **in your browser** 🧠
-- No database needed (fast & lightweight) 🚀
-- Data stays even after refreshing 🔄
+- Stores all feedback **in your browser** 
+- No database needed (fast & lightweight) 
+- Data stays even after refreshing 
 
 ### 📄 **PDF Report Generation (For Official Drama 📜)**
 
 - Generates a **detailed PDF report** including:
-  - Food item ratings 🥘
-  - Average ratings 📊
-  - Suggestions 💡
-  - Complaints 🚨
-- Uses **jsPDF** to make reports admin-friendly 👨‍💼
+  - Food item ratings 
+  - Average ratings 
+  - Suggestions 
+  - Complaints 
+- Uses **jsPDF** to make reports admin-friendly 
 - **Simulated phone number-based report sending** 📲
 
 ### ⚠️ **Admin Danger Zone (Handle with Care 💀)**
 
 - **Clear ALL feedback data** instantly ❌
 - **Confirmation prompt** before deletion 🛑
-- **Auto-refreshes** dashboard after clearing 🌀
+- **Auto-refreshes** dashboard after clearing 
 
 ### 📱 **Responsive Design (Use It Anywhere! 🌍)**
 
@@ -117,11 +117,11 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 
 ## 🎯 Why This Is a Game Changer
 
-🚀 **Real-time feedback collection** (instant reactions to bad food!)
-🔒 **Admin control over feedback system** (no spam ratings!)
-📊 **Comprehensive food rating analytics** (facts, not feelings!)
-⚡ **No complex setup** (just open & use!)
-💨 **Fast & lightweight** (runs on vanilla JavaScript!)
+**Real-time feedback collection** (instant reactions to bad food!)
+**Admin control over feedback system** (no spam ratings!)
+**Comprehensive food rating analytics** (facts, not feelings!)
+**No complex setup** (just open & use!)
+**Fast & lightweight** (runs on vanilla JavaScript!)
 
 ---
 
