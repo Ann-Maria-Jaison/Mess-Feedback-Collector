@@ -6,11 +6,11 @@ Hostel food can be a **rollercoaster**—one day it's decent, and the next, you'
 
 Mess committee meetings happen, but students rarely say what they actually want. So, we decided to **hack the system** and create a website that:
 
-✅ **Lets students rate each food item** (so we know which dishes are a crime against taste buds) 🍲
-✅ **Collects suggestions & complaints** anonymously 📢
-✅ **Analyzes data to show the worst-rated items** so the committee can fix them 📉
-✅ **Provides an admin panel** to control everything 🛠️
-✅ **Generates a PDF report** of all the feedback 📄
+- ✅ **Lets students rate each food item** (so we know which dishes are a crime against taste buds) 🍲
+- ✅ **Collects suggestions & complaints** anonymously 📢
+- ✅ **Analyzes data to show the worst-rated items** so the committee can fix them 📉
+- ✅ **Provides an admin panel** to control everything 🛠️
+- ✅ **Generates a PDF report** of all the feedback 📄
 
 Basically, this system makes sure our hostel food doesn't make us question our life choices anymore. 🚀
 
