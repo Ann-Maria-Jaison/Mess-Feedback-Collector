@@ -31,9 +31,9 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 - See a **visual color-coded rating distribution**
 - Generate a **PDF report** for mess committee meetings
 - **Wipe all data** (for when things get out of hand) 🚨
-**Username:admin**
-**Password: admin123**
 ---
+## Username:admin
+## Password: admin123
 
 ## 🛠️ Features & Special Sauce 🏆
 
