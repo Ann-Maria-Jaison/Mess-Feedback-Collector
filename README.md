@@ -1,6 +1,6 @@
 # 🍛 Hostel Mess Feedback System - Because We Deserve Better Food! 🏠🍽️
 
-## 💡 Why This Exists (A.K.A. The Great Hostel Food Struggle) 
+## 💡 Why This Exists (A.K.A. The Great Hostel Food Struggle)
 
 Hostel food can be a **rollercoaster**—one day it's decent, and the next, you're questioning your life choices. 🌚 The biggest problem? **Nobody speaks up!**
 
