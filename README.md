@@ -16,7 +16,6 @@ Basically, this system makes sure our hostel food doesn't make us question our l
 
 ---
 
-
 ## 🔥 How It Works
 
 👩‍🎓 **Students:**
